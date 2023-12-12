@@ -6,9 +6,8 @@ dotenv.config();
 const config: HardhatUserConfig = {
   solidity: "0.8.19",
   networks: {
-    klaytn: {
-      url: process.env.KLAYTN_URL || "",
-      gasPrice: 250000000000,
+    mode: {
+      url: "https://mainnet.mode.network",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },

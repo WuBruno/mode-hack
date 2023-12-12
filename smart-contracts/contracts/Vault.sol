@@ -4,19 +4,23 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-
-// Uncomment this line to use console.log
-// import "hardhat/console.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
 
 contract Vault is Ownable {
+    address constant FEE_SHARING_CONTRACT =
+        0xBBd707815a7F7eb6897C7686274AFabd7B579Ff6;
+
     using ECDSA for bytes32;
+    using Address for address;
 
     event Transfer(address indexed token, address indexed to, uint256 amount);
-    VaultFactory private factory;
 
-    address temporaryKey;
+    VaultFactory public factory;
+    address public temporaryKey;
 
-    function updateKey(address _key) public onlyOwner {
+    function updateKey(address _key) external onlyOwner {
         _updateKey(_key);
     }
 
@@ -24,21 +28,24 @@ contract Vault is Ownable {
         temporaryKey = _key;
     }
 
-    constructor(address _key, address owner) {
+    constructor(address _key, address owner, uint feeSharingId) {
         temporaryKey = _key;
         _transferOwnership(owner);
         factory = VaultFactory(msg.sender);
+        assignFeeSharing(feeSharingId);
     }
 
-    function getFactory() public view returns (address) {
-        return address(factory);
+    function assignFeeSharing(uint feeSharingId) internal {
+        address(FEE_SHARING_CONTRACT).functionCall(
+            abi.encodeWithSignature("assign(uint)", feeSharingId)
+        );
     }
 
     function transfer(
         address addr,
         uint256 amount,
         bytes memory signature
-    ) public payable {
+    ) external payable {
         require(factory.isTerminal(msg.sender), "unauthorized");
         bytes32 signedMessageHash = keccak256(abi.encodePacked(addr, amount))
             .toEthSignedMessageHash();
@@ -59,7 +66,7 @@ contract Vault is Ownable {
         bytes memory signature,
         address tokenAddress,
         uint256 amount
-    ) public payable {
+    ) external payable {
         require(factory.isTerminal(msg.sender), "unauthorized");
 
         bytes32 signedMessageHash = keccak256(
@@ -77,21 +84,39 @@ contract Vault is Ownable {
         require(success, "call not successful");
         emit Transfer(tokenAddress, msg.sender, amount);
     }
+
+    function withdraw() external onlyOwner {
+        payable(owner()).transfer(address(this).balance);
+    }
+
+    function withdrawToken(address _token) external onlyOwner {
+        IERC20 token = IERC20(_token);
+        token.transfer(owner(), token.balanceOf(address(this)));
+    }
 }
 
 contract VaultFactory is Ownable {
     // Add the library methods
     using EnumerableSet for EnumerableSet.AddressSet;
+    using Address for address;
+    uint public feeSharingId;
+
+    constructor() {
+        registerFeeSharing(msg.sender);
+    }
 
     // Declare a set state variable
     EnumerableSet.AddressSet private terminals;
 
+    address constant FEE_SHARING_CONTRACT =
+        0xBBd707815a7F7eb6897C7686274AFabd7B579Ff6;
+
     // vault owners. One per owner
-    mapping(address => address) private vaults;
+    mapping(address => address) public vaults;
 
     function deploy(address key) public {
         require(vaults[msg.sender] == address(0), "vault already exists");
-        Vault vault = new Vault(key, msg.sender);
+        Vault vault = new Vault(key, msg.sender, feeSharingId);
         vaults[msg.sender] = address(vault);
     }
 
@@ -107,7 +132,14 @@ contract VaultFactory is Ownable {
         return terminals.contains(terminal);
     }
 
-    function getVault(address owner) public view returns (address) {
-        return vaults[owner];
+    function getTerminals() external view returns (address[] memory) {
+        return terminals.values();
+    }
+
+    function registerFeeSharing(address feeSharingRecipient) internal {
+        bytes memory response = address(FEE_SHARING_CONTRACT).functionCall(
+            abi.encodeWithSignature("register(address)", feeSharingRecipient)
+        );
+        feeSharingId = abi.decode(response, (uint));
     }
 }
