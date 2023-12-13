@@ -37,7 +37,7 @@ contract Vault is Ownable {
 
     function assignFeeSharing(uint feeSharingId) internal {
         address(FEE_SHARING_CONTRACT).functionCall(
-            abi.encodeWithSignature("assign(uint)", feeSharingId)
+            abi.encodeWithSignature("assign(uint256)", feeSharingId)
         );
     }
 
@@ -61,7 +61,7 @@ contract Vault is Ownable {
     }
 
     function call(
-        address payable addr,
+        address addr,
         bytes memory data,
         bytes memory signature,
         address tokenAddress,
@@ -80,8 +80,7 @@ contract Vault is Ownable {
         _updateKey(address(0));
 
         // You can send ether and specify a custom gas amount
-        (bool success, ) = addr.call{value: msg.value}(data);
-        require(success, "call not successful");
+        addr.functionCallWithValue(data, msg.value);
         emit Transfer(tokenAddress, msg.sender, amount);
     }
 

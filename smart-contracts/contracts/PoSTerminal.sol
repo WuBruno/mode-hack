@@ -15,7 +15,7 @@ contract PoSTerminal is Ownable {
 
     function assignFeeSharing(uint feeSharingId) internal {
         address(FEE_SHARING_CONTRACT).functionCall(
-            abi.encodeWithSignature("assign(uint)", feeSharingId)
+            abi.encodeWithSignature("assign(uint256)", feeSharingId)
         );
     }
 
@@ -33,8 +33,7 @@ contract PoSTerminal is Ownable {
     ) public payable onlyOwner {
         Vault(vaultAddress).transfer(tokenAddress, amount, signature);
 
-        (bool success, ) = target.call{value: msg.value}(data);
-        require(success, "call not successful");
+        target.functionCallWithValue(data, msg.value);
     }
 
     function withdraw() public onlyOwner {
@@ -46,11 +45,7 @@ contract PoSTerminal is Ownable {
         token.transfer(owner(), token.balanceOf(address(this)));
     }
 
-    function call(
-        address payable addr,
-        bytes memory data
-    ) public payable onlyOwner {
-        (bool success, ) = addr.call{value: msg.value}(data);
-        require(success, "call not successful");
+    function call(address addr, bytes memory data) public payable onlyOwner {
+        addr.functionCallWithValue(data, msg.value);
     }
 }
