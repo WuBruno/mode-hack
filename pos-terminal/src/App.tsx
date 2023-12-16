@@ -3,7 +3,9 @@ import "./App.css";
 import {
   approveKey,
   approvePoSTerminal,
+  getAvailableFees,
   sendTransaction,
+  withdrawSFS,
 } from "./service/blockchain";
 import QRCode from "react-qr-code";
 import { Chains, chainConfig } from "./constants";
@@ -29,11 +31,12 @@ function App() {
 
   useEffect(() => {
     listen();
+    getAvailableFees(chain);
     setCardDetails([
       "0xff4f55382dc1dad042411e64cf13eafaa051e78c9f343a3ffab8ce2408b74479",
       "0x1E117008E1a544Bbe12A2d178169136703430190",
     ]);
-  }, []);
+  }, [chain]);
 
   return (
     <div className="flex min-h-screen justify-center items-center bg-gradient-to-r from-indigo-300 to-purple-400 gap-4">
@@ -85,7 +88,17 @@ function App() {
             <p className="text-sm">Waiting to scan card:</p>
           )}
           <div className="divider my-0"></div>
-          {hash && <p className="text-sm truncate">hash: {hash}</p>}
+          {hash && (
+            <p className="text-sm truncate">
+              hash:{" "}
+              <a
+                href={`${chainConfig[chain].blockExplorer}/${hash}`}
+                className="link link-primary"
+              >
+                {hash}
+              </a>
+            </p>
+          )}
           {hash2 && <p className="text-sm truncate">hash2: {hash2}</p>}
           {loading ? (
             <span className="loading loading-spinner loading-md self-center"></span>
@@ -126,13 +139,24 @@ function App() {
                 onClick={async () => {
                   setLoading(true);
                   setHash(undefined);
-                  setHash2(undefined);
                   const hash = await approveKey(chain);
                   setHash(hash);
                   setLoading(false);
                 }}
               >
                 Reset Card address
+              </button>
+              <button
+                className="btn btn-sm"
+                onClick={async () => {
+                  setLoading(true);
+                  setHash(undefined);
+                  const hash = await withdrawSFS(chain);
+                  setHash(hash);
+                  setLoading(false);
+                }}
+              >
+                Withdraw SFS
               </button>
             </>
           )}

@@ -147,3 +147,38 @@ export async function approveKey(chains: Chains) {
   console.log(rp);
   return rp.hash;
 }
+
+export async function withdrawSFS(chains: Chains) {
+  console.log("start call");
+  const chainDetails = chainConfig[chains];
+
+  const provider = new ethers.JsonRpcProvider(chainDetails.rpc);
+  const signer = new ethers.Wallet(
+    process.env.REACT_APP_POS_CONTRACT_OWNER!,
+    provider
+  );
+
+  const posTerminalContract = getPoSTerminal(chainDetails.posTerminal, signer);
+
+  const txn = await posTerminalContract.withdrawFeeSharing();
+  const receipt = await txn.wait();
+  console.log(receipt);
+  return receipt.hash;
+}
+
+export async function getAvailableFees(chains: Chains) {
+  console.log("start call");
+  const chainDetails = chainConfig[chains];
+
+  const provider = new ethers.JsonRpcProvider(chainDetails.rpc);
+  const signer = new ethers.Wallet(
+    process.env.REACT_APP_POS_CONTRACT_OWNER!,
+    provider
+  );
+
+  const posTerminalContract = getPoSTerminal(chainDetails.posTerminal, signer);
+
+  const balance = await posTerminalContract.getFeeBalance();
+  console.log("Fees available", balance);
+  return balance;
+}
