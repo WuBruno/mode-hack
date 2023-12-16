@@ -23,15 +23,15 @@ async function main() {
   console.log("vault", vaultAddress);
 
   // // Deploy PoSTerminal
-  // const poSTerminal = await ethers.deployContract("PoSTerminal", [103]);
+  // const poSTerminal = await ethers.deployContract("PoSTerminal");
   // await poSTerminal.waitForDeployment();
   const poSTerminal = await ethers.getContractAt(
     "PoSTerminal",
-    "0x473C35c466506c0e235620F348f7F199182489A7"
+    "0x7034baF34acA066DE42eae69E16FFADaa6e6750e"
   );
   console.log("posTerminal", await poSTerminal.getAddress());
 
-  // // Add terminal
+  // Add terminal
   // await vaultFactory.addTerminal(await poSTerminal.getAddress());
   console.log(await vaultFactory.isTerminal(await poSTerminal.getAddress()));
 }

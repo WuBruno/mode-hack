@@ -28,7 +28,7 @@ All contracts are deployed to mainnet
 - `VaultFactory Contract`: [0xCE2E5022982F3f3E11D199eae5A59de1371748f5](https://sepolia.explorer.mode.network/address/0xCE2E5022982F3f3E11D199eae5A59de1371748f5)
   - Allows new users to deploy their own vaults.
   - Stores valid PoS Terminal addresses managed by owners
-- `POSTerminal Contract`: = [0x473C35c466506c0e235620F348f7F199182489A7](https://sepolia.explorer.mode.network/address/0x473C35c466506c0e235620F348f7F199182489A7?tab=contract)
+- `POSTerminal Contract`: = [0x7034baF34acA066DE42eae69E16FFADaa6e6750e](https://sepolia.explorer.mode.network/address/0x7034baF34acA066DE42eae69E16FFADaa6e6750e)
   - Contracts owned by approved retailers that can accept payments from Vault contracts through transactions approved with the ephemeral key
   - Programmable bundled transactions. Upon nfc card payments extra steps can be composed to do swaps on a DEX or integrate with any other on-chain contract
 

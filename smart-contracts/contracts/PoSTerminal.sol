@@ -9,18 +9,42 @@ import "./Vault.sol";
 
 contract PoSTerminal is Ownable {
     using Address for address;
+    uint public tokenId;
 
     address constant FEE_SHARING_CONTRACT =
         0xBBd707815a7F7eb6897C7686274AFabd7B579Ff6;
 
-    function assignFeeSharing(uint feeSharingId) internal {
+    function registerFeeSharing(address feeSharingRecipient) internal {
+        bytes memory response = address(FEE_SHARING_CONTRACT).functionCall(
+            abi.encodeWithSignature("register(address)", feeSharingRecipient)
+        );
+        tokenId = abi.decode(response, (uint));
+    }
+
+    function getFeeBalance() public view returns (uint balance) {
+        bytes memory response = address(FEE_SHARING_CONTRACT)
+            .functionStaticCall(
+                abi.encodeWithSignature("balances(uint256)", tokenId)
+            );
+        balance = abi.decode(response, (uint));
+    }
+
+    function withdrawFeeSharing() external onlyOwner {
+        uint balance = getFeeBalance();
+        require(balance > 0, "No balance to withdraw");
+
         address(FEE_SHARING_CONTRACT).functionCall(
-            abi.encodeWithSignature("assign(uint256)", feeSharingId)
+            abi.encodeWithSignature(
+                "withdraw(uint256,address,uint256)",
+                tokenId,
+                msg.sender,
+                balance
+            )
         );
     }
 
-    constructor(uint feeSharingId) {
-        assignFeeSharing(feeSharingId);
+    constructor() {
+        registerFeeSharing(address(this));
     }
 
     function transferAndCall(
