@@ -11,6 +11,11 @@ export const vaultAbi = [
         name: "owner",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "feeSharingId",
+        type: "uint256",
+      },
     ],
     stateMutability: "nonpayable",
     type: "constructor",
@@ -62,7 +67,7 @@ export const vaultAbi = [
   {
     inputs: [
       {
-        internalType: "address payable",
+        internalType: "address",
         name: "addr",
         type: "address",
       },
@@ -94,10 +99,10 @@ export const vaultAbi = [
   },
   {
     inputs: [],
-    name: "getFactory",
+    name: "factory",
     outputs: [
       {
-        internalType: "address",
+        internalType: "contract VaultFactory",
         name: "",
         type: "address",
       },
@@ -123,6 +128,19 @@ export const vaultAbi = [
     name: "renounceOwnership",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "temporaryKey",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -170,6 +188,26 @@ export const vaultAbi = [
       },
     ],
     name: "updateKey",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "withdraw",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_token",
+        type: "address",
+      },
+    ],
+    name: "withdrawToken",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

@@ -9,7 +9,7 @@ import QRCode from "react-qr-code";
 import { Chains, chainConfig } from "./constants";
 
 function App() {
-  const [chain, setChain] = useState<Chains>("klatyn");
+  const [chain, setChain] = useState<Chains>("mode");
   const [cardDetails, setCardDetails] = useState<[string, string]>();
   const [hash, setHash] = useState();
   const [hash2, setHash2] = useState();

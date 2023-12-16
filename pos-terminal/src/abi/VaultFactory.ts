@@ -1,5 +1,10 @@
 export const vaultFactoryAbi = [
   {
+    inputs: [],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -45,19 +50,26 @@ export const vaultFactoryAbi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-    ],
-    name: "getVault",
+    inputs: [],
+    name: "feeSharingId",
     outputs: [
       {
-        internalType: "address",
+        internalType: "uint256",
         name: "",
-        type: "address",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getTerminals",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
       },
     ],
     stateMutability: "view",
@@ -126,6 +138,25 @@ export const vaultFactoryAbi = [
     name: "transferOwnership",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "vaults",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
 ];

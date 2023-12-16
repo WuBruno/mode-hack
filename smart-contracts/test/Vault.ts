@@ -20,7 +20,7 @@ describe("Vault", function () {
 
     const poSTerminal = await ethers.deployContract("PoSTerminal");
 
-    const vaultAddress = await vaultFactory.getVault(owner.address);
+    const vaultAddress = await vaultFactory.vaults(owner.address);
     const vault = await ethers.getContractAt("Vault", vaultAddress);
 
     await testToken.transfer(await vaultAddress, ethers.parseEther("100"));

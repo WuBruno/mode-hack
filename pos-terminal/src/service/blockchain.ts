@@ -49,7 +49,7 @@ export const sendTransaction = async (
       )
   ).data;
 
-  const vaultAddress = await getVaultFactory(signer, chain).getVault(
+  const vaultAddress = await getVaultFactory(signer, chain).vaults(
     signer.getAddress()
   );
   console.log("vaultAddress", vaultAddress);
@@ -134,7 +134,7 @@ export async function approveKey(chains: Chains) {
     provider
   );
 
-  const vaultAddress = await getVaultFactory(signer, chains).getVault(
+  const vaultAddress = await getVaultFactory(signer, chains).vaults(
     signer.getAddress()
   );
   console.log(vaultAddress);
